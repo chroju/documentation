@@ -1,5 +1,5 @@
 ---
-title: Set Up Observability Pipelines in your Splunk Environment
+title: Set Up Observability Pipelines in Splunk
 kind: documentation
 aliases:
   - /integrations/observability_pipelines/splunk
@@ -27,7 +27,7 @@ This guide walks you through deploying the Worker in your common tools cluster a
 
 ## Assumptions
 * You are using a log collector that is compatible with the Splunk HTTP Event Collector (HEC) protocol.
-* You have administrative access to the collectors and the Splunk Index.
+* You have administrative access to the collectors and the Splunk index where logs will be sent to.
 * You have administrative access to the clusters where the Observability Pipelines Worker is going to be deployed.
 * You have a common tools or security cluster for your environment to which all other clusters are connected.
 
@@ -38,8 +38,6 @@ Before installing, make sure you have:
 * A Pipeline ID.
 
 You can generate both of these in [Observability Pipelines][3].
-
-You will also need a Splunk index to send logs to.
 
 ### Provider-specific requirements
 {{< tabs >}}
@@ -69,18 +67,17 @@ There are no provider-specific requirements for RPM-based Linux.
 {{% /tab %}}
 {{< /tabs >}}
 
-## Setting up the Splunk Index
-In order to receive logs from the Observability Pipelines Worker, you will need to provision a HEC input and HEC token on the index.
+## Setting up the Splunk index
 
-Under **Settings > Data Inputs**, add a new HTTP Event Collector input. You can name it whatever you wish.
+<div class="alert alert-info">Observability Pipelines supports acknowledgements when you enable the <strong>Enable Indexer Acknowledgements</strong> setting on the input.</div>
+To receive logs from the Observability Pipelines Worker, you must provision a HEC input and HEC token on the index.
 
-{{< callout url="#" btn_hidden="true" header="Acknowledgements" >}}
-  Observability Pipelines supports acknolwedgements when you enable the <strong>Enable Indexer Acknowledgements</strong> setting on this input.
-{{< /callout >}}
 
-Select whichever index(es) you wish for logs to flow into.
+1. In Splunk, navigate to **Settings** > **Data Inputs**.
+2. Add a new HTTP Event Collector input and assign it a name.
+3. Select the indexes where you want the logs to be sent.
 
-Once the input is created, Splunk will create a token for you, usually in a UUID format. In the sample configurations below, you will add this token so that the Observability Pipelines Worker can authenticate itself.
+After you add the input, Splunk creates a token for you. The token is typically in a UUID format. In the sample configurations provided in later sections in this article, you will add this token to the configuration so that the Observability Pipelines Worker can authenticate itself.
 
 ## Installing the Observability Pipelines Worker
 
@@ -88,7 +85,8 @@ Once the input is created, Splunk will create a token for you, usually in a UUID
 {{% tab "AWS EKS" %}}
 1. Download the [Helm chart][1] for AWS EKS.
 
-2. In the Helm chart, replace the `datadog.apiKey` and `datadog.pipelineId` values to match your pipeline. Then, replace the values for `SPLUNK_ENDPOINT` and `SPLUNK_HEC_TOKEN` to match your Splunk deployment (and the token you created above). Then, install it in your cluster with the following commands:
+2. In the Helm chart, replace the `datadog.apiKey` and `datadog.pipelineId` values to match your pipeline. Then, replace the values for `SPLUNK_ENDPOINT` and `SPLUNK_HEC_TOKEN` to match your Splunk deployment, including the token you created in [Setting up the Splunk index](setting-up-the-splunk-index).
+3. Install the Helm chart in your cluster with the following commands:
 
     ```shell
     helm repo add datadog https://helm.datadoghq.com
@@ -107,7 +105,8 @@ Once the input is created, Splunk will create a token for you, usually in a UUID
 {{% tab "Azure AKS" %}}
 1. Download the [Helm chart][1] for Azure AKS.
 
-2. In the Helm chart, replace the `datadog.apiKey` and `datadog.pipelineId` values to match your pipeline. Then, replace the values for `SPLUNK_ENDPOINT` and `SPLUNK_HEC_TOKEN` to match your Splunk deployment (and the token you created above). Then, install it in your cluster with the following commands:
+2. In the Helm chart, replace the `datadog.apiKey` and `datadog.pipelineId` values to match your pipeline. Then, replace the values for `SPLUNK_ENDPOINT` and `SPLUNK_HEC_TOKEN` to match your Splunk deployment, including the token you created in [Setting up the Splunk index](setting-up-the-splunk-index).
+3. Install the Helm chart in your cluster with the following commands:
 
     ```shell
     helm repo add datadog https://helm.datadoghq.com
@@ -126,7 +125,8 @@ Once the input is created, Splunk will create a token for you, usually in a UUID
 {{% tab "Google GKE" %}}
 1. Download the [Helm chart][1] for Google GKE.
 
-2. In the Helm chart, replace the `datadog.apiKey` and `datadog.pipelineId` values to match your pipeline. Then, replace the values for `SPLUNK_ENDPOINT` and `SPLUNK_HEC_TOKEN` to match your Splunk deployment (and the token you created above). Then, install it in your cluster with the following commands:
+2. In the Helm chart, replace the `datadog.apiKey` and `datadog.pipelineId` values to match your pipeline. Then, replace the values for `SPLUNK_ENDPOINT` and `SPLUNK_HEC_TOKEN` to match your Splunk deployment, including the token you created in [Setting up the Splunk index](setting-up-the-splunk-index).
+3. Install the Helm chart in your cluster with the following commands:
 
     ```shell
     helm repo add datadog https://helm.datadoghq.com
@@ -318,15 +318,15 @@ Where possible, it is recommended to have a separate SSD mounted at that locatio
 {{% /tab %}}
 {{< /tabs >}}
 
-## Connect forwarder(s) to the Worker
-Once you have the Observability Pipelines Worker installed and configured to send to your Splunk index, you must update your existing collectors to point at the Worker.
+## Connect forwarders to the Worker
+After you install and configure the Observability Pipelines Worker to send logs to your Splunk index, you must update your existing collectors to point to the Worker.
 
-For most collectors that exist, simply changing the URL to the load balancer provisioned by these configurations, and updating the token, should suffice.
+For most collectors, changing the URL to the load balancer provisioned by these configurations, and updating the token, should suffice.
 
-At this point, your logs should be going to the Worker and is available for processing. The next section goes through what process is included by default, and the additional options that are available.
+At this point, your logs should be going to the Worker and be available for processing. The next section goes through what process is included by default, and the additional options that are available.
 
 ## Working with data
-The sample configurations provided does the following:
+The sample configurations provided do the following:
 
 - **Tag logs coming through the Observability Pipelines Worker.** This helps determine what traffic still needs to be shifted over to the Worker as you update your clusters. These tags also show you how logs are being routed through the load balancer, in case there are imbalances.
 - **Dual-writes to Datadog.** This demonstrates how easy it is to write to multiple destinations.
