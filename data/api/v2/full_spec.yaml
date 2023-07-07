@@ -1523,6 +1523,10 @@ components:
           type: string
         tags:
           $ref: '#/components/schemas/TagsEventAttribute'
+        test_level:
+          description: The event test level.
+          example: session
+          type: string
         timestamp:
           $ref: '#/components/schemas/TimestampEventAttribute'
       type: object
@@ -2213,7 +2217,7 @@ components:
         links:
           $ref: '#/components/schemas/CIAppResponseLinks'
         meta:
-          $ref: '#/components/schemas/CIAppResponseMetadataWithPagination'
+          $ref: '#/components/schemas/CIAppResponseMetadata'
       type: object
     CIAppPipelinesAggregateRequest:
       description: The object sent with the request to retrieve aggregation buckets
@@ -2363,29 +2367,6 @@ components:
           example: 132
           format: int64
           type: integer
-        request_id:
-          description: The identifier of the request.
-          example: MWlFUjVaWGZTTTZPYzM0VXp1OXU2d3xLSVpEMjZKQ0VKUTI0dEYtM3RSOFVR
-          type: string
-        status:
-          $ref: '#/components/schemas/CIAppResponseStatus'
-        warnings:
-          description: 'A list of warnings (non-fatal errors) encountered. Partial
-            results may return if
-
-            warnings are present in the response.'
-          items:
-            $ref: '#/components/schemas/CIAppWarning'
-          type: array
-      type: object
-    CIAppResponseMetadataWithPagination:
-      description: The metadata associated with a request.
-      properties:
-        elapsed:
-          description: The time elapsed in milliseconds.
-          example: 132
-          format: int64
-          type: integer
         page:
           $ref: '#/components/schemas/CIAppResponsePage'
         request_id:
@@ -2486,7 +2467,7 @@ components:
         links:
           $ref: '#/components/schemas/CIAppResponseLinks'
         meta:
-          $ref: '#/components/schemas/CIAppResponseMetadataWithPagination'
+          $ref: '#/components/schemas/CIAppResponseMetadata'
       type: object
     CIAppTestsAggregateRequest:
       description: The object sent with the request to retrieve aggregation buckets
@@ -18045,6 +18026,7 @@ paths:
           content:
             application/json:
               schema:
+                additionalProperties: {}
                 type: object
           description: Request accepted for processing
         '400':
