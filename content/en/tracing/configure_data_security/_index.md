@@ -31,36 +31,36 @@ Opening sentence
 | URI parameters      | The parameter values in the variable part of the URI path or the URI query.                                            |
 | URI userinfo        | The userinfo subcomponent of the URI that may contain the user name.                                                   |
 
-These data categories are collected by the automatic instrumentation provided by each of the following language tracing libraries:
+For each language library, a data category is collected if it is supported by automatic instrumentation and collection is enabled by default. The data category can also be obfuscated by default. 
 
 {{% tabs %}}
 
 {{% tab ".NET" %}}
 
-| Category            | How the data is collected      |
-|---------------------|--------------|
-| Name                | Collected by default without obfuscation      |
-| Email               | Collected by default without obfuscation      |
-| Client IP           | Collected by default without obfuscation      |
-| Database statements | Collected by default with obfuscation      |
-| Geographic location | Never collected      |
-| URI parameters      | Collected by default with obfuscation      |
-| URI userinfo        | Never collected      |
+| Category            | Collected | Obfuscated |
+|---------------------|-----------|------------|
+| Name                | {{< X >}} |            |
+| Email               | {{< X >}} |            |
+| Client IP           | {{< X >}} |            |
+| Database statements | {{< X >}} | {{< X >}}  |
+| Geographic location |           |            |
+| URI parameters      | {{< X >}} |            |
+| URI userinfo        |           |            |
 
 
 {{% /tab %}}
 
 {{% tab "Java" %}}
 
-| Category            | How the data is collected      |
-|---------------------|--------------|
-| Name                | Collected by default without obfuscation      |
-| Email               | Collected by default without obfuscation      |
-| Client IP           | Not collected by default, enabled with obfuscation     |
-| Database statements | Collected by default without obfuscation      |
-| Geographic location | Never collected      |
-| URI parameters      | Collected by default with obfuscation      |
-| URI userinfo        | Never collected      |
+| Category            | Collected                      | Obfuscated |
+|---------------------|--------------------------------|------------|
+| Name                | {{< X >}}                      |            |
+| Email               | {{< X >}}                      |            |
+| Client IP           | <i class="icon-gear-bold"></i> | {{< X >}}  |
+| Database statements | {{< X >}}                      |            |
+| Geographic location |                                |            |
+| URI parameters      | {{< X >}}                      | {{< X >}}  |
+| URI userinfo        |                                |            |
 
 {{% /tab %}}
 
